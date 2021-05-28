@@ -26,6 +26,31 @@ class _ShitPageState extends State<ShitPage>
     super.dispose();
   }
 
+  final shitTabs = [
+    Tab(
+      text: "关注",
+
+    ),
+    Tab(
+      text: "专享",
+    ),
+    Tab(
+      text: "视频",
+    ),
+    Tab(
+      text: "纯文",
+    ),
+    Tab(
+      text: "纯图",
+    ),
+    Tab(
+      text: "精华",
+    ),
+    Tab(
+      text: "爆社",
+    ),
+  ];
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -59,15 +84,28 @@ class _ShitPageState extends State<ShitPage>
             Container(
               height: 50,
               child: DefaultTabController(
-                length: 3,
+                length: shitTabs.length,
                 child: TabBar(
-                tabs: <Widget>[
-                  Tab(icon: Icon(Icons.assignment_ind),),
-                  Tab(icon: Icon(Icons.assignment_late),),
-                  Tab(icon: Icon(Icons.assignment_return),),
-                ],
-              ),),
-            )
+                  labelColor: Colors.black,
+
+                  indicator:  BoxDecoration(),
+                  unselectedLabelColor: Colors.grey,
+                  labelStyle: TextStyle(
+                    fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      decoration: TextDecoration.underline,
+                      decorationColor: Colors.yellow,
+                      decorationThickness: 6,
+                      decorationStyle: TextDecorationStyle.dotted),
+                  isScrollable: true,
+                  unselectedLabelStyle: TextStyle(
+                      decoration: TextDecoration.none,
+                  ),
+                  tabs: shitTabs,
+                ),
+              ),
+            ),
+
           ],
         ));
   }
