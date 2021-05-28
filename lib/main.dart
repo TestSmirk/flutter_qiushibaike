@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:qiubai/ui/shit/msg.dart';
 import 'package:qiubai/ui/shit/shit.dart';
 
+import 'api/api.dart';
 
 void main() {
   runApp(MyApp());
@@ -31,6 +32,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       bottomNavigationBar: BottomNavigationBar(
           selectedFontSize: 12,
