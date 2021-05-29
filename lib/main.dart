@@ -47,7 +47,7 @@ class _MyHomePageState extends State<MyHomePage> {
           },
           items: [
             BottomNavigationBarItem(
-                backgroundColor: Colors.red,
+                backgroundColor: Colors.white,
                 icon: Container(
                   width: 25,
                   height: 25,

@@ -93,7 +93,6 @@ class _ShitPageState extends State<ShitPage>
           children: [
             Container(
               height: 50,
-              color: Colors.red,
               child: Row(
                 children: [
                   Container(

@@ -64,32 +64,47 @@ class _ShitListComState extends State<ShitListCom>
         header: ClassicalHeader(),
         slivers: [
             SliverList(
-              delegate: SliverChildBuilderDelegate(
+                  delegate: SliverChildBuilderDelegate(
                 (context, index) {
                   final item = items[index];
                   return ShitItem(item);
                 },
-              ),
+                childCount: items.length),
             )
           ])
         : Text("loading");
   }
 
   void data() {
+    Future result;
     switch (this.type) {
       case ShitListCom.TYPE_OWN:
         {
-          Api.getOwn().then((value) {
-            print('getOwngetOwn $value');
-            setState(() {
-              items = value["items"];
-            });
-            _controller.resetLoadState();
-            _controller.finishRefresh();
-
-          });
+          result = Api.getOwn();
+          break;
         }
+      case ShitListCom.TYPE_VIDEO:
+        {
+          result = Api.getVideo();
+          break;
+        }
+      case ShitListCom.TYPE_TEXT:
+        result = Api.getText();
+
+        break;
+        case ShitListCom.TYPE_PIC:
+        result = Api.getImage();
+
+        break;
     }
+    result?.then((value) {
+      print('getOwngetOwn $value');
+      setState(() {
+        items = value["items"];
+      });
+      _controller.resetLoadState();
+      _controller.finishRefresh();
+    });
   }
 }
 
@@ -125,6 +140,7 @@ class _ShitItemState extends State<ShitItem>
   @override
   Widget build(BuildContext context) {
     final user = item["user"];
+    final hot_comment = item["hot_comment"];
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -139,7 +155,7 @@ class _ShitItemState extends State<ShitItem>
                 child: CachedNetworkImage(
                   width: 40,
                   height: 40,
-                  imageUrl: user["thumb"],
+                  imageUrl: user["thumb"] ?? "",
                 ),
               ),
               Container(
@@ -183,7 +199,9 @@ class _ShitItemState extends State<ShitItem>
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
         ),
-        Padding(
+        Visibility(
+          visible: item["pic_url"]!=null,
+            child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 10),
           child: Container(
             height: 300,
@@ -197,8 +215,135 @@ class _ShitItemState extends State<ShitItem>
                   ),
                 ),
               ),
-              imageUrl: item["pic_url"],
+              imageUrl: item["pic_url"] ?? "",
             ),
+          ),
+        )),
+        Visibility(
+            visible: hot_comment != null,
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 12),
+              child: Container(
+                decoration: BoxDecoration(
+                    color: Color(0xfff6f6f6),
+                    borderRadius: BorderRadius.all(Radius.circular(5))),
+                child: Column(
+                  children: [
+                    Container(
+                      height: 35,
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 5,
+                          ),
+                          ClipOval(
+                            child: CachedNetworkImage(
+                                height: 25,
+                                width: 25,
+                                imageUrl: hot_comment != null
+                                    ? hot_comment["user"]["thumb"] ?? ""
+                                    : ""),
+                          ),
+                          Container(
+                            width: 5,
+                          ),
+                          Text(hot_comment != null
+                              ? hot_comment["user"]["login"]
+                              : ""),
+                          Spacer(),
+                          Text(
+                            "${hot_comment != null ? hot_comment["like_count"] : ""} 赞",
+                            style: TextStyle(color: Colors.grey, fontSize: 10),
+                          ),
+                          Container(
+                            width: 10,
+                          )
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                      child: Expanded(
+                        child: Container(
+                          width: double.infinity,
+                          child: Text(
+                            hot_comment != null ? hot_comment["content"] : "d",
+                            textAlign: TextAlign.start,
+                            style: TextStyle(
+                                fontSize: 15,
+                                color: Color(0xff636363),
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            )),
+        Container(
+          height: 40,
+          child: Row(
+            children: [
+              Container(
+                width: 20,
+              ),
+              Icon(
+                Icons.tag_faces,
+                size: 20,
+              ),
+              Container(
+                width: 5,
+              ),
+              Text(
+                "${item["votes"]["up"]}",
+                style: TextStyle(fontSize: 12),
+              ),
+              Container(
+                width: 10,
+              ),
+              Icon(
+                Icons.thumb_down_alt_outlined,
+                size: 20,
+              ),
+              Container(
+                width: 5,
+              ),
+              Text(
+                "${item["votes"]["down"]}",
+                style: TextStyle(fontSize: 12),
+              ),
+              Spacer(),
+              Icon(
+                Icons.comment,
+                size: 20,
+              ),
+              Container(
+                width: 5,
+              ),
+              Text(
+                "${item["comments_count"]}",
+                style: TextStyle(fontSize: 12),
+              ),
+              Container(
+                width: 5,
+              ),
+              Icon(
+                Icons.share,
+                size: 20,
+              ),
+              Container(
+                width: 5,
+              ),
+              Text(
+                "${item["share_count"]}",
+                style: TextStyle(fontSize: 12),
+              ),
+              Container(
+                width: 10,
+              ),
+            ],
           ),
         )
       ],
