@@ -1,8 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
+import 'package:interactiveviewer_gallery/hero_dialog_route.dart';
+import 'package:interactiveviewer_gallery/interactiveviewer_gallery.dart';
 import 'package:nine_grid_view/nine_grid_view.dart';
 import 'package:qiubai/api/api.dart';
+import 'package:video_player/video_player.dart';
 
 class ShitListCom extends StatefulWidget {
   static const TYPE_FOLLOW = 0;
@@ -202,33 +206,79 @@ class _ShitItemState extends State<ShitItem>
           ),
         ),
         Visibility(
-          visible: item["pic_url"]!=null,
+            visible: item["pic_url"] != null,
             child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 10),
-          child: Container(
-            height: 300,
-            child: CachedNetworkImage(
-              imageBuilder: (context, imageProvider) => Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(5)),
-                  image: DecorationImage(
-                    image: imageProvider,
-                    fit: BoxFit.cover,
+              padding: EdgeInsets.symmetric(horizontal: 10),
+              child: Container(
+                height: 300,
+                child: CachedNetworkImage(
+                  imageBuilder: (context, imageProvider) => Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(5)),
+                      image: DecorationImage(
+                        image: imageProvider,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
                   ),
+                  imageUrl: item["pic_url"] ?? "",
                 ),
               ),
-              imageUrl: item["pic_url"] ?? "",
-            ),
-          ),
-        )),
+            )),
+        Visibility(
+            visible: attach != null,
+            child: NineGridView(
+                type: NineGridType.weiBo,
+                itemCount: attach != null ? attach.length : 0,
+                itemBuilder: (context, index) {
+                  final subItem = attach[index];
 
-        Visibility(visible:attach!=null,child:NineGridView(itemCount: attach!=null?attach.length:0, itemBuilder: (context,index){
+                  final lowUrl = subItem["low_url"];
 
-          final subItem = attach[index];
-          return CachedNetworkImage(
-              fit:BoxFit.fill,
-              imageUrl: subItem!=null?subItem["low_url"]:"");
-        }) ),
+                  final imageUrl = lowUrl.toString().endsWith("mp4")
+                      ? subItem["pic_url"]
+                      : lowUrl;
+                  return GestureDetector(
+                      onTap: () {
+                        Navigator.of(context).push(
+                          HeroDialogRoute<void>(
+                            // DisplayGesture is just debug, please remove it when use
+                            builder: (BuildContext context) =>
+                                InteractiveviewerGallery(
+                              sources: attach,
+                              initIndex: attach.indexOf(subItem),
+                              itemBuilder: (context, index, isFocus) {
+                                final lowUrl = attach[index]["low_url"];
+                                print('lowUrl ${lowUrl}');
+                                if (lowUrl.toString().endsWith("mp4")) {
+
+                                  final videoPlayerController  =VideoPlayerController.network(
+                                      "https:${lowUrl}");
+                                  videoPlayerController.initialize();
+                                  final chewieController = ChewieController(
+                                    videoPlayerController: videoPlayerController,
+                                    autoPlay: true,
+                                    looping: true,
+                                  );
+                                  return Chewie(controller: chewieController);
+                                } else {
+                                  return CachedNetworkImage(
+                                      imageUrl:
+                                          "https:${attach[index]["origin_url"]}");
+                                }
+                              },
+                              onPageChanged: (int pageIndex) {
+                                print("nell-pageIndex:$pageIndex");
+                              },
+                            ),
+                          ),
+                        );
+                      },
+                      child: Hero(
+                          tag: "https:$imageUrl",
+                          child: CachedNetworkImage(
+                              fit: BoxFit.cover, imageUrl: "https:$imageUrl")));
+                })),
         Visibility(
             visible: hot_comment != null,
             child: Padding(
@@ -360,3 +410,4 @@ class _ShitItemState extends State<ShitItem>
     );
   }
 }
+

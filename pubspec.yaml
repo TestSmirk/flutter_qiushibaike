@@ -33,6 +33,9 @@ dependencies:
   cached_network_image: ^3.0.0
   flutter_easyrefresh: ^2.2.1
   nine_grid_view: ^2.0.0
+  interactiveviewer_gallery: ^0.5.0
+  video_player: ^2.1.4
+  chewie: ^1.0.2
 
 
 dev_dependencies:
