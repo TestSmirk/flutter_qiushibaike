@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
+import 'package:nine_grid_view/nine_grid_view.dart';
 import 'package:qiubai/api/api.dart';
 
 class ShitListCom extends StatefulWidget {
@@ -141,6 +142,7 @@ class _ShitItemState extends State<ShitItem>
   Widget build(BuildContext context) {
     final user = item["user"];
     final hot_comment = item["hot_comment"];
+    final attach = item["attachments"];
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -219,6 +221,14 @@ class _ShitItemState extends State<ShitItem>
             ),
           ),
         )),
+
+        Visibility(visible:attach!=null,child:NineGridView(itemCount: attach!=null?attach.length:0, itemBuilder: (context,index){
+
+          final subItem = attach[index];
+          return CachedNetworkImage(
+              fit:BoxFit.fill,
+              imageUrl: subItem!=null?subItem["low_url"]:"");
+        }) ),
         Visibility(
             visible: hot_comment != null,
             child: Padding(
