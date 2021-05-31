@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:qiubai/ui/dynamic/dynamic.dart';
 import 'package:qiubai/ui/shit/msg.dart';
 import 'package:qiubai/ui/shit/shit.dart';
 
@@ -8,7 +9,7 @@ void main() {
   runApp(MyApp());
 }
 
-final pages = [ShitPage(), ShitPage(), ShitPage(), MsgPage(), MsgPage()];
+final pages = [ShitPage(), DynamicPage(), ShitPage(), MsgPage(), MsgPage()];
 
 class MyApp extends StatelessWidget {
   @override
