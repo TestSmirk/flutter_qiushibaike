@@ -101,6 +101,10 @@ class _ShitListComState extends State<ShitListCom>
         result = Api.getImage();
 
         break;
+      case ShitListCom.TYPE_SELECTIVE:
+
+        result = Api.getSelective();
+        break;
     }
     result?.then((value) {
       print('getOwngetOwn $value');
