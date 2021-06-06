@@ -24,6 +24,6 @@ class _DynamicPageState extends State<DynamicPage> with SingleTickerProviderStat
 
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Container(child: Text("tete"),);
   }
 }
