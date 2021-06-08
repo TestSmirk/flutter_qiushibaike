@@ -25,10 +25,8 @@ class ShitListCom extends StatefulWidget {
 }
 
 class _ShitListComState extends State<ShitListCom>
-
     with SingleTickerProviderStateMixin {
-   EasyRefreshController _controller;
-
+  EasyRefreshController _controller;
 
   var type;
   List<dynamic> items;
@@ -46,8 +44,6 @@ class _ShitListComState extends State<ShitListCom>
     super.initState();
     _scrollController = ScrollController();
     _controller = EasyRefreshController();
-
-
   }
 
   @override
@@ -60,23 +56,21 @@ class _ShitListComState extends State<ShitListCom>
   Widget build(BuildContext context) {
     return items != null
         ? EasyRefresh.custom(
-        enableControlFinishRefresh: true,
-        scrollController: _scrollController,
-        controller: _controller,
-        onRefresh: ()async{
-          data();
-        },
-        header: ClassicalHeader(),
-        slivers: [
-            SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                (context, index) {
-                  final item = items[index];
-                  return ShitItem(item);
-                },
-                childCount: items.length),
-            )
-          ])
+            enableControlFinishRefresh: true,
+            scrollController: _scrollController,
+            controller: _controller,
+            onRefresh: () async {
+              data();
+            },
+            header: ClassicalHeader(),
+            slivers: [
+                SliverList(
+                  delegate: SliverChildBuilderDelegate((context, index) {
+                    final item = items[index];
+                    return ShitItem(item);
+                  }, childCount: items.length),
+                )
+              ])
         : Text("loading");
   }
 
@@ -97,13 +91,15 @@ class _ShitListComState extends State<ShitListCom>
         result = Api.getText();
 
         break;
-        case ShitListCom.TYPE_PIC:
+      case ShitListCom.TYPE_PIC:
         result = Api.getImage();
 
         break;
       case ShitListCom.TYPE_SELECTIVE:
-
         result = Api.getSelective();
+        break;
+      case ShitListCom.TYPE_FOLLOW:
+        result = Api.getText();
         break;
     }
     result?.then((value) {
@@ -255,12 +251,13 @@ class _ShitItemState extends State<ShitItem>
                                 final lowUrl = attach[index]["low_url"];
                                 print('lowUrl ${lowUrl}');
                                 if (lowUrl.toString().endsWith("mp4")) {
-
-                                  final videoPlayerController  =VideoPlayerController.network(
-                                      "https:${lowUrl}");
+                                  final videoPlayerController =
+                                      VideoPlayerController.network(
+                                          "https:${lowUrl}");
                                   videoPlayerController.initialize();
                                   final chewieController = ChewieController(
-                                    videoPlayerController: videoPlayerController,
+                                    videoPlayerController:
+                                        videoPlayerController,
                                     autoPlay: true,
                                     looping: true,
                                   );
@@ -414,4 +411,3 @@ class _ShitItemState extends State<ShitItem>
     );
   }
 }
-
