@@ -22,9 +22,9 @@ class Api {
   static final _dio = Dio()
     ..interceptors.add(LogInterceptor(responseBody: true));
 
-  static Future getOwn() async {
+  static Future getOwn({page}) async {
     try {
-      var request = await _dio.get(_own);
+      var request = await _dio.get(_own,queryParameters: {"page":page});
 
       return jsonDecode(request.toString());
     } catch (e) {

@@ -27,7 +27,7 @@ class ShitListCom extends StatefulWidget {
 class _ShitListComState extends State<ShitListCom>
     with SingleTickerProviderStateMixin {
   EasyRefreshController _controller;
-
+  var currentPage =1;
   var type;
   List<dynamic> items;
   ScrollController _scrollController;
@@ -60,7 +60,15 @@ class _ShitListComState extends State<ShitListCom>
             scrollController: _scrollController,
             controller: _controller,
             onRefresh: () async {
+              currentPage = 1;
               data();
+            },
+        enableControlFinishLoad: false ,
+        onLoad: () async{
+            print('onLoad');
+            currentPage+=1;
+            data();
+
             },
             header: ClassicalHeader(),
             slivers: [
@@ -79,7 +87,7 @@ class _ShitListComState extends State<ShitListCom>
     switch (this.type) {
       case ShitListCom.TYPE_OWN:
         {
-          result = Api.getOwn();
+          result = Api.getOwn(page:currentPage);
           break;
         }
       case ShitListCom.TYPE_VIDEO:
@@ -105,7 +113,13 @@ class _ShitListComState extends State<ShitListCom>
     result?.then((value) {
       print('getOwngetOwn $value');
       setState(() {
-        items = value["items"];
+        List a=  value["items"];
+        if(currentPage<=1){
+        items = a;
+
+        }else{
+          items.addAll(a);
+        }
       });
       _controller.resetLoadState();
       _controller.finishRefresh();
@@ -325,17 +339,15 @@ class _ShitItemState extends State<ShitItem>
                     Padding(
                       padding:
                           EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                      child: Expanded(
-                        child: Container(
-                          width: double.infinity,
-                          child: Text(
-                            hot_comment != null ? hot_comment["content"] : "d",
-                            textAlign: TextAlign.start,
-                            style: TextStyle(
-                                fontSize: 15,
-                                color: Color(0xff636363),
-                                fontWeight: FontWeight.bold),
-                          ),
+                      child: Container(
+                        width: double.infinity,
+                        child: Text(
+                          hot_comment != null ? hot_comment["content"] : "d",
+                          textAlign: TextAlign.start,
+                          style: TextStyle(
+                              fontSize: 15,
+                              color: Color(0xff636363),
+                              fontWeight: FontWeight.bold),
                         ),
                       ),
                     ),
