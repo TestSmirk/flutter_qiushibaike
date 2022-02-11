@@ -3,7 +3,8 @@
 qiubai for flutter?
 
 
-![](asset/qiubai_sample1.png)
+![](asset/qiubai_sample1.jpg)
+
 This project is a starting point for a Flutter application.
 
 A few resources to get you started if this is your first Flutter project:
