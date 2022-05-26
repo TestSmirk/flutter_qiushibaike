@@ -6,6 +6,7 @@ import 'package:interactiveviewer_gallery/hero_dialog_route.dart';
 import 'package:interactiveviewer_gallery/interactiveviewer_gallery.dart';
 import 'package:nine_grid_view/nine_grid_view.dart';
 import 'package:qiubai/api/api.dart';
+import 'package:qiubai/ui/win/pop.dart';
 import 'package:video_player/video_player.dart';
 
 class ShitListCom extends StatefulWidget {
@@ -114,6 +115,9 @@ class _ShitListComState extends State<ShitListCom>
       print('getOwngetOwn $value');
       setState(() {
         List a=  value["items"];
+        a.forEach((element) {
+          print(element);
+        });
         if(currentPage<=1){
         items = a;
 
@@ -223,6 +227,24 @@ class _ShitItemState extends State<ShitItem>
             visible: item["pic_url"] != null,
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 10),
+              child: GestureDetector(onTap: (){
+               final url =  item["high_url"];
+               print("url $url");
+               final videoPlayerController = VideoPlayerController.network("${url}");
+               videoPlayerController.initialize();
+               final chewieController = ChewieController(
+                 videoPlayerController: videoPlayerController,
+                 autoPlay: true,
+                 looping: true,
+               );
+               Navigator.of(context).push( MaterialPageRoute(builder: (context)=>WillPopScope(child: Scaffold(body: Chewie(controller: chewieController),), onWillPop: ()async{
+                 print("backpress");
+                 chewieController.pause();
+                 chewieController.dispose();
+                 return true;
+               })));
+
+              },
               child: Container(
                 height: 300,
                 child: CachedNetworkImage(
@@ -237,7 +259,7 @@ class _ShitItemState extends State<ShitItem>
                   ),
                   imageUrl: item["pic_url"] ?? "",
                 ),
-              ),
+              ),),
             )),
         Visibility(
             visible: attach != null,
@@ -254,40 +276,7 @@ class _ShitItemState extends State<ShitItem>
                       : lowUrl;
                   return GestureDetector(
                       onTap: () {
-                        Navigator.of(context).push(
-                          HeroDialogRoute<void>(
-                            // DisplayGesture is just debug, please remove it when use
-                            builder: (BuildContext context) =>
-                                InteractiveviewerGallery(
-                              sources: attach,
-                              initIndex: attach.indexOf(subItem),
-                              itemBuilder: (context, index, isFocus) {
-                                final lowUrl = attach[index]["low_url"];
-                                print('lowUrl ${lowUrl}');
-                                if (lowUrl.toString().endsWith("mp4")) {
-                                  final videoPlayerController =
-                                      VideoPlayerController.network(
-                                          "https:${lowUrl}");
-                                  videoPlayerController.initialize();
-                                  final chewieController = ChewieController(
-                                    videoPlayerController:
-                                        videoPlayerController,
-                                    autoPlay: true,
-                                    looping: true,
-                                  );
-                                  return Chewie(controller: chewieController);
-                                } else {
-                                  return CachedNetworkImage(
-                                      imageUrl:
-                                          "https:${attach[index]["origin_url"]}");
-                                }
-                              },
-                              onPageChanged: (int pageIndex) {
-                                print("nell-pageIndex:$pageIndex");
-                              },
-                            ),
-                          ),
-                        );
+                        Navigator.of(context).push( MaterialPageRoute(builder: (context)=>Pop(attach: attach,index: attach.indexOf(subItem))));
                       },
                       child: Hero(
                           tag: "https:$imageUrl",

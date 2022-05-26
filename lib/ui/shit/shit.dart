@@ -12,7 +12,7 @@ class ShitPage extends StatefulWidget {
 }
 
 class _ShitPageState extends State<ShitPage>
-    with SingleTickerProviderStateMixin, TickerProviderStateMixin {
+    with TickerProviderStateMixin{
   AnimationController _controller;
   var tabIndex = 1;
   var pageIndex = 1;
